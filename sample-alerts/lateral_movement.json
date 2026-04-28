@@ -1,0 +1,1 @@
+{"event_type": "lateral_movement", "level": "high", "ts": "2024-04-28T10:10:00Z", "src_host": "workstation-001.corp.local", "dst_host": "dc01.corp.local", "src_ip": "10.0.0.50", "dst_ip": "10.0.0.2", "message": "SMB lateral movement attempt: pass-the-hash attack from compromised workstation targeting Domain Controller.", "username": "jdoe", "technique": "T1550.002"}

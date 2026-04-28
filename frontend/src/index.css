@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    background-color: #0a0e1a;
+    color: #f9fafb;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #374151;
+    border-radius: 3px;
+  }
+}
+
+/* Prism syntax highlight — custom dark theme */
+code[class*='language-'],
+pre[class*='language-'] {
+  background: #111827 !important;
+  color: #d1d5db !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.75rem !important;
+  text-shadow: none !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.token.comment { color: #6b7280 !important; }
+.token.keyword { color: #60a5fa !important; }
+.token.string { color: #34d399 !important; }
+.token.function { color: #a78bfa !important; }
+.token.operator { color: #f59e0b !important; }
+.token.variable { color: #f9fafb !important; }
+.token.number { color: #fb923c !important; }
+.token.punctuation { color: #9ca3af !important; }

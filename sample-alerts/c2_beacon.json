@@ -1,0 +1,1 @@
+{"event_type": "c2_beacon", "severity": "critical", "timestamp": "2024-04-28T10:00:00Z", "src_ip": "194.165.16.11", "dst_ip": "10.0.0.100", "src_host": "db-prod-01.corp.local", "dst_port": 443, "message": "Suspicious outbound HTTPS beacon to known C2 infrastructure. Periodic 60-second interval detected.", "username": "postgres", "bytes_out": 2048, "process": "postgres"}

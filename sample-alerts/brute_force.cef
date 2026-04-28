@@ -1,0 +1,1 @@
+CEF:0|ArcSight|Logger|7.2.0.8353.0|authentication:100|SSH Brute Force Attack|8|src=185.220.101.47 dst=10.0.0.5 spt=45123 dpt=22 suser=root msg=Multiple failed authentication attempts detected. 547 attempts in 60 seconds.

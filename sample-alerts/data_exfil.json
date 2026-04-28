@@ -1,0 +1,1 @@
+{"event_type": "data_exfiltration", "severity": "high", "timestamp": "2024-04-28T10:05:00Z", "src_ip": "10.0.0.100", "dst_ip": "185.220.101.47", "dst_port": 443, "src_host": "db-prod-01.corp.local", "message": "Anomalous outbound data transfer: 500MB sent to external IP in 3 minutes. Exceeds baseline by 10000%.", "bytes_transferred": 524288000, "username": "dbadmin"}

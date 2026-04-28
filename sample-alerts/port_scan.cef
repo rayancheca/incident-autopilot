@@ -1,0 +1,1 @@
+CEF:0|Cisco|IDS|8.1.0|port_scan|Nmap Port Scan Detected|7|src=45.134.144.141 dst=10.0.0.0/24 dpt=0 msg=Comprehensive port scan detected. SYN packets to 1024 ports in under 5 seconds. Likely automated reconnaissance tool.

@@ -59,6 +59,16 @@ def _resolve_timestamp(data: dict) -> datetime:
     return datetime.now(tz=timezone.utc)
 
 
+def _parse_port(raw: object) -> int | None:
+    if raw is None:
+        return None
+    try:
+        port = int(str(raw).split("/")[0])
+        return port if 0 <= port <= 65535 else None
+    except (ValueError, TypeError):
+        return None
+
+
 def parse_json(raw: str) -> NormalizedEvent:
     try:
         data: dict = json.loads(raw)
@@ -89,8 +99,8 @@ def parse_json(raw: str) -> NormalizedEvent:
         dest_ip=data.get("dst_ip") or data.get("dest_ip") or data.get("dst"),
         source_host=data.get("src_host") or data.get("source_host") or data.get("hostname"),
         dest_host=data.get("dst_host") or data.get("dest_host"),
-        src_port=int(src_port_raw) if src_port_raw is not None else None,
-        dest_port=int(dst_port_raw) if dst_port_raw is not None else None,
+        src_port=_parse_port(src_port_raw),
+        dest_port=_parse_port(dst_port_raw),
         username=data.get("username") or data.get("user") or data.get("actor"),
         process_name=data.get("process") or data.get("process_name") or data.get("proc"),
         message=message,

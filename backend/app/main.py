@@ -7,12 +7,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import alerts, health, remediation, reports, ws
 from app.core.config import settings
 from app.core.logging import configure_logging
+from app.services.ollama_client import get_ollama_client
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     configure_logging(settings.log_level)
-    yield
+    client = get_ollama_client()
+    try:
+        yield
+    finally:
+        await client.aclose()
 
 
 app = FastAPI(
@@ -25,9 +30,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],
 )
 
 app.include_router(health.router, prefix="/api")

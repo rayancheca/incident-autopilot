@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 
 from pydantic import BaseModel, Field
@@ -16,7 +16,7 @@ class ApprovalStatus(StrEnum):
 class BashScript(BaseModel):
     body: str
     rationale: str
-    target_hosts: list[str] = []
+    target_hosts: list[str] = Field(default_factory=list)
     requires_root: bool = True
     sha256: str = ""
 
@@ -30,7 +30,7 @@ class RemediationItem(BaseModel):
     auto_approved: bool = False
     approver: str | None = None
     rejection_reason: str | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
     actioned_at: datetime | None = None
 
 
@@ -44,5 +44,5 @@ class ExecutionLog(BaseModel):
     script_sha256: str
     approver: str
     simulated_exit_code: int = 0
-    executed_at: datetime = Field(default_factory=datetime.utcnow)
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
     note: str = "Simulated — no real shell commands were executed"

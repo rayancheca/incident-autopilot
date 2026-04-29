@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Any
 
@@ -22,7 +22,7 @@ class AlertSeverity(StrEnum):
 
 
 class RawAlertIn(BaseModel):
-    raw: str = Field(..., description="Raw alert string in any supported format")
+    raw: str = Field(..., max_length=65_536, description="Raw alert string in any supported format")
     format_hint: AlertFormat | None = Field(
         None, description="Optional format hint; auto-detected if omitted"
     )
@@ -47,4 +47,4 @@ class NormalizedEvent(BaseModel):
     geo: GeoInfo | None = None
     threat_intel: ThreatIntelInfo | None = None
     asset: AssetInfo | None = None
-    ingested_at: datetime = Field(default_factory=datetime.utcnow)
+    ingested_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))

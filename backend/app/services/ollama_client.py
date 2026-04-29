@@ -21,7 +21,7 @@ class OllamaClient:
         try:
             resp = await self._client.get(f"{self._base_url}/api/tags")
             return resp.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def stream_completion(

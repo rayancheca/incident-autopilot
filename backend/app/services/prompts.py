@@ -33,7 +33,7 @@ def build_ir_prompt(events: list[NormalizedEvent]) -> str:
         f"Source IP: {e.source_ip or 'N/A'} (GeoIP: {e.geo.country_name if e.geo else 'N/A'})\n"
         f"Dest IP: {e.dest_ip or 'N/A'}\n"
         f"Source Host: {e.source_host or 'N/A'}"
-        + (f" [CROWN JEWEL asset]" if e.asset and e.asset.tier.value == "CROWN_JEWEL" else "")
+        + (" [CROWN JEWEL asset]" if e.asset and e.asset.tier.value == "CROWN_JEWEL" else "")
         + f"\n"
         f"Username: {e.username or 'N/A'}\n"
         f"Process: {e.process_name or 'N/A'}\n"

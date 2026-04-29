@@ -69,6 +69,23 @@ class InMemoryStore:
         with self._lock:
             self._remediation[item.id] = item
 
+    def transition_remediation(
+        self,
+        item_id: str,
+        from_statuses: set,
+        updates: dict,
+    ) -> RemediationItem | None:
+        """Atomically check status and apply updates. Returns updated item or None on conflict."""
+        with self._lock:
+            item = self._remediation.get(item_id)
+            if item is None:
+                return None
+            if item.approval_status not in from_statuses:
+                return None
+            updated = item.model_copy(update=updates)
+            self._remediation[item_id] = updated
+            return updated
+
     def list_remediation_queue(self) -> list[RemediationItem]:
         with self._lock:
             return list(self._remediation.values())

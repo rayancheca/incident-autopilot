@@ -1,3 +1,5 @@
+import re
+
 import structlog
 
 from app.models.alerts import AlertSeverity
@@ -11,6 +13,17 @@ from app.utils.ids import new_id
 from app.utils.json_repair import parse_json_with_repair
 
 logger = structlog.get_logger(__name__)
+
+# Patterns that indicate potentially dangerous script content
+_DANGEROUS_PATTERNS = re.compile(
+    r"curl\s+.*\|\s*(bash|sh)|"
+    r"wget\s+.*\|\s*(bash|sh)|"
+    r"\beval\b|"
+    r"base64\s+-d.*\|\s*(bash|sh)",
+    re.IGNORECASE,
+)
+
+_MAX_SCRIPT_BYTES = 32_768
 
 _AUTO_APPROVE_SEVERITIES = {AlertSeverity.LOW, AlertSeverity.MEDIUM}
 
@@ -69,8 +82,21 @@ async def generate_remediation(
     return item
 
 
+def _validate_script_body(body: str) -> str:
+    """Reject scripts with dangerous patterns; truncate oversized bodies."""
+    if len(body.encode()) > _MAX_SCRIPT_BYTES:
+        logger.warning("remediation_script_oversized", size=len(body.encode()))
+        body = body[:_MAX_SCRIPT_BYTES]
+    if _DANGEROUS_PATTERNS.search(body):
+        logger.error("remediation_script_dangerous_pattern_detected")
+        return "#!/bin/bash\necho 'Script rejected: dangerous pattern detected' >&2\nexit 1"
+    return body
+
+
 def _build_item(data: dict, report: IRReport) -> RemediationItem:
-    body = str(data.get("body", "#!/bin/bash\necho 'No script generated'"))
+    body = _validate_script_body(
+        str(data.get("body", "#!/bin/bash\necho 'No script generated'"))
+    )
     script = BashScript(
         body=body,
         rationale=str(data.get("rationale", "")),

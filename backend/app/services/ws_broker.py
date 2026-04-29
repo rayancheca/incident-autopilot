@@ -1,7 +1,12 @@
 import asyncio
+import logging
 from collections import defaultdict
 
 from fastapi import WebSocket
+
+logger = logging.getLogger(__name__)
+
+_MAX_SUBSCRIBERS_PER_REPORT = 20
 
 
 class WSBroker:
@@ -11,9 +16,14 @@ class WSBroker:
         self._subscribers: dict[str, list[WebSocket]] = defaultdict(list)
         self._lock = asyncio.Lock()
 
-    async def subscribe(self, report_id: str, ws: WebSocket) -> None:
+    async def subscribe(self, report_id: str, ws: WebSocket) -> bool:
+        """Returns False if the subscriber cap is reached."""
         async with self._lock:
-            self._subscribers[report_id].append(ws)
+            subs = self._subscribers[report_id]
+            if len(subs) >= _MAX_SUBSCRIBERS_PER_REPORT:
+                return False
+            subs.append(ws)
+            return True
 
     async def unsubscribe(self, report_id: str, ws: WebSocket) -> None:
         async with self._lock:
@@ -29,7 +39,8 @@ class WSBroker:
         for ws in targets:
             try:
                 await ws.send_text(message)
-            except Exception:
+            except Exception as exc:
+                logger.debug("ws_send_failed", extra={"error": str(exc)})
                 dead.append(ws)
 
         if dead:
